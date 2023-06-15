@@ -1,0 +1,35 @@
+version: "3"
+services:
+  db:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: mydb
+      POSTGRES_USER: myuser
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: hailatdev/express_postgresql_docker:latest
+    container_name: express_postgresql_docker_container
+    command: sh -c "npm run dev"
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: mydb
+      DB_USER: myuser
+      DB_PASSWORD: example
+    volumes:
+      - ./:/app
+    depends_on:
+      - db
+
+volumes:
+  src:
+  db-data:
